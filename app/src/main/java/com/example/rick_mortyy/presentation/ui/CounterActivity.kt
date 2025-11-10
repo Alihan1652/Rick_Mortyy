@@ -1,4 +1,4 @@
-package com.example.rick_mortyy
+package com.example.rick_mortyy.presentation.ui
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -8,7 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.example.rick_mortyy.databinding.ActivityMainBinding
 
-class MainActivity : AppCompatActivity() {
+class CounterActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
