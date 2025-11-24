@@ -5,9 +5,9 @@ import com.example.rick_mortyy.domain.models.Character
 import com.example.rick_mortyy.domain.repository.CharacterRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetCharacterUseCase(
+class GetCharacterByIdUseCase(
     private val repository: CharacterRepository
 ) {
-
-    fun getCharacters(): Flow<Either<String, List<Character>>> = repository.getCharacters()
+    operator fun invoke(id: Int): Flow<Either<String, Character>> =
+        repository.getCharacterByID(id)
 }
