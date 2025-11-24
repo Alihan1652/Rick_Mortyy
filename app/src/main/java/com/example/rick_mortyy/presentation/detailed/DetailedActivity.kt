@@ -14,11 +14,14 @@ import coil3.load
 import coil3.request.crossfade
 import com.example.rick_mortyy.R
 import com.example.rick_mortyy.databinding.ActivityDetailedBinding
+import com.example.rick_mortyy.domain.models.Character
+import com.example.rick_mortyy.presentation.base.BaseActivity
+import com.example.rick_mortyy.presentation.utils.UiState
 import com.example.rick_mortyy.presentation.viewmodel.DetailCharacterViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DetailedActivity : AppCompatActivity() {
+class DetailedActivity : BaseActivity() {
     private lateinit var binding: ActivityDetailedBinding
     private val viewModel: DetailCharacterViewModel by viewModel()
 
@@ -45,11 +48,18 @@ class DetailedActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.characterState.collect { character ->
-                        character?.let {
+      viewModel.characterState.handleState(
+          onLoading = {},
+          onSuccess = {
+              setData(it)
+          }
+      )
+    }
+
+
+
+    private fun setData(character: Character){
+        character.let {
                             with(binding) {
                                 tvNameDt.text = it.name
                                 tvStatusDt.text = it.status
@@ -75,14 +85,3 @@ class DetailedActivity : AppCompatActivity() {
                         }
                     }
                 }
-                launch {
-                    viewModel.errorState.collect { message ->
-                        message?.let {
-                            Toast.makeText(this@DetailedActivity, it, Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-        }
-    }
-}

@@ -14,7 +14,7 @@ abstract class BaseRepository {
         request: suspend () -> Response<T>
     ): Flow<Either<String, T>> {
         return flow {
-            delay(300)
+            delay(1000)
             try {
                 val response = request()
                 if (response.isSuccessful && response.body() != null) {

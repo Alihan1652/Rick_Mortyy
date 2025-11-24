@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.rick_mortyy.core.Either
 import com.example.rick_mortyy.domain.models.Character
 import com.example.rick_mortyy.domain.usecases.GetCharacterUseCase
+import com.example.rick_mortyy.presentation.utils.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
@@ -14,29 +15,24 @@ class CharacterViewModel(
     private val getCharacterUseCase: GetCharacterUseCase
 ): ViewModel() {
 
-    private val _charactersState = MutableStateFlow<List<Character>>(emptyList())
+    private val _charactersState = MutableStateFlow<UiState<List<Character>>>(UiState.Empty)
     val charactersState = _charactersState.asStateFlow()
-
-    private val _errorState = MutableStateFlow<String?>(null)
-    val errorState = _errorState.asStateFlow()
-
-    private val _loaderState = MutableStateFlow(false)
-    val loaderState = _loaderState.asStateFlow()
 
     fun getCharacters() {
         viewModelScope.launch {
             getCharacterUseCase.getCharacters()
-                .onStart { _loaderState.value = true }
+                .onStart {
+                    _charactersState.value = UiState.Loading
+                }
                 .collect { result ->
                     when(result) {
                         is Either.Left -> {
-                            _errorState.value = result.value
-                            _loaderState.value = false
+                           _charactersState.value = UiState.Error(result.value)
                         }
 
                         is Either.Right -> {
-                            _charactersState.value = result.value
-                            _loaderState.value = false
+                            _charactersState.value = UiState.Success(result.value)
+
                         }
                     }
                 }
